@@ -36,9 +36,9 @@ const SurveyForm = () => {
   const classes = useStyles();
 
   const [formData, setFormData] = useState({
-    rating: undefined,
-    deviceVariation: undefined,
-    review: undefined,
+    rating: "",
+    deviceVariation: "",
+    review: "",
     timestamp: undefined,
   });
 
@@ -50,15 +50,15 @@ const SurveyForm = () => {
 
   const validate = () => {
     // Check rating
-    if (formData.rating === undefined) {
+    if (formData.rating === "") {
       return "You Must Give The Device A Rating";
     }
     // Check deviceVariation
-    else if (formData.deviceVariation === undefined) {
+    else if (formData.deviceVariation === "") {
       return "You Must Select A Device Variation";
     }
     // Check review
-    else if (formData.review === undefined) {
+    else if (formData.review === "") {
       return "You Must Write A Review";
     } else if (!formData.review.match(/^[A-Za-z0-9 _.,!"'/$]+$/)) {
       return "The Review Can Only Contain Numbers, Letters, and Punctuation";
@@ -70,18 +70,21 @@ const SurveyForm = () => {
   const handleSubmit = () => {
     let validation = validate();
     if (validation === "true") {
-      firebase
-        .firestore()
-        .collection("alexaReviews")
-        .add({
-          rating: formData.rating,
-          deviceVariation: formData.deviceVariation,
-          review: formData.review,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        })
-        .then(() => {
-          window.location.reload(false);
-        });
+      firebase.firestore().collection("alexaReviews").add({
+        rating: formData.rating,
+        deviceVariation: formData.deviceVariation,
+        review: formData.review,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      // Reset the form
+      setFormData({
+        rating: "",
+        deviceVariation: "",
+        review: "",
+        timestamp: undefined,
+      });
+      // Reset Error
+      setError("");
     } else {
       console.log(validation);
       setError(validation);

@@ -32,7 +32,10 @@ const RecentReviews = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        setReviews(recentReviews);
+        if (recentReviews.every((obj) => obj.timestamp != null)) {
+          // We need to make sure the objects all have timestamp. Firestore uses cache to get fast responses, but we need to hit the server for a timestamp
+          setReviews(recentReviews);
+        }
       });
   }, []);
 
